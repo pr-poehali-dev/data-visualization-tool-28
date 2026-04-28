@@ -1,42 +1,43 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import Icon from "@/components/ui/icon"
 
 const features = [
   {
-    title: "Адаптивная нейрообработка",
-    description: "Самооптимизирующиеся алгоритмы, которые обучаются на нейронных паттернах и улучшают интерпретацию сигналов.",
-    icon: "brain",
+    title: "Создание музыки",
+    description: "Генерируй треки по текстовому описанию, добавляй вокал — мужской, женский или дуэт. Поддержка всех музыкальных стилей и озвучка треков с микрофона.",
+    icon: "Music",
+    badge: "Аудио",
+  },
+  {
+    title: "Генерация видео",
+    description: "Создавай видео из текста или фото, редактируй загруженные клипы. Вертикальный формат для соцсетей, эффекты и работа с таймингом.",
+    icon: "Video",
+    badge: "Видео",
+  },
+  {
+    title: "Работа с фото",
+    description: "Оживляй изображения, колоризируй ч/б фото, создавай слайд-шоу с музыкой. Генерация изображений по описанию и добавление текста с выбором шрифта.",
+    icon: "Image",
+    badge: "Фото",
+  },
+  {
+    title: "Написание текстов",
+    description: "Создавай статьи, сценарии, посты и любые другие тексты по запросу. Редактируй и улучшай собственные тексты с помощью ИИ.",
+    icon: "FileText",
+    badge: "Текст",
+  },
+  {
+    title: "Создание джинглов",
+    description: "Музыкальные, вокальные и смешанные джинглы. Звуковые логотипы от 3 секунд до радиороликов. Настройка BPM, жанра, инструментов и голосовых эффектов.",
+    icon: "Radio",
+    badge: "Джинглы",
+  },
+  {
+    title: "Все нейросети в одном месте",
+    description: "Интеграция со всеми актуальными ИИ-сервисами: текстовыми, аудио, видео и графическими. Регистрация через Google, VK, Яндекс и другие сервисы.",
+    icon: "Sparkles",
     badge: "ИИ",
-  },
-  {
-    title: "Медицинская защита",
-    description: "Шифрование по стандартам FDA со сквозной защитой конфиденциальных нейронных данных.",
-    icon: "lock",
-    badge: "Сертификат",
-  },
-  {
-    title: "Интуитивное управление",
-    description: "Естественная трансляция мыслей в действия с откликом менее миллисекунды и точностью 99,7%.",
-    icon: "globe",
-    badge: "Точность",
-  },
-  {
-    title: "Предиктивная калибровка",
-    description: "ML-модели, которые предугадывают намерения пользователя и оптимизируют нейронные пути.",
-    icon: "zap",
-    badge: "Умный",
-  },
-  {
-    title: "Биометрическая интеграция",
-    description: "Бесшовная синхронизация с мониторингом жизненных показателей для контроля здоровья.",
-    icon: "link",
-    badge: "Связь",
-  },
-  {
-    title: "Поддержка XR",
-    description: "Нативная совместимость с AR/VR-средами для терапевтических и рабочих приложений.",
-    icon: "target",
-    badge: "XR Ready",
   },
 ]
 
@@ -45,9 +46,9 @@ export function FeaturesSection() {
     <section className="py-24 px-6 bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-foreground mb-4 font-sans">Возможности нового поколения</h2>
+          <h2 className="text-4xl font-bold text-foreground mb-4 font-sans">Всё для вашего творчества</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Почувствуйте будущее с технологиями, которые переопределяют возможное
+            Музыка, видео, фото, тексты и джинглы — создавай контент любого формата с помощью ИИ
           </p>
         </div>
 
@@ -60,14 +61,7 @@ export function FeaturesSection() {
             >
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-3xl">
-                    {feature.icon === "brain" && "&#129504;"}
-                    {feature.icon === "lock" && "&#128274;"}
-                    {feature.icon === "globe" && "&#127760;"}
-                    {feature.icon === "zap" && "&#9889;"}
-                    {feature.icon === "link" && "&#128279;"}
-                    {feature.icon === "target" && "&#127919;"}
-                  </span>
+                  <Icon name={feature.icon} size={32} className="text-primary" fallback="Star" />
                   <Badge variant="secondary" className="bg-accent text-accent-foreground">
                     {feature.badge}
                   </Badge>
