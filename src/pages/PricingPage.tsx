@@ -4,12 +4,14 @@ import { Badge } from "@/components/ui/badge"
 import Icon from "@/components/ui/icon"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { Link } from "react-router-dom"
 
 const PLANS = [
   {
     name: "Бесплатный",
     price: "0 ₽",
     period: "навсегда",
+    planKey: null,
     badge: null,
     color: "border-border",
     btnClass: "border-border text-white hover:border-primary",
@@ -29,6 +31,7 @@ const PLANS = [
     name: "Базовый",
     price: "490 ₽",
     period: "в месяц",
+    planKey: "basic",
     badge: null,
     color: "border-border",
     btnClass: "border-primary text-primary hover:bg-primary hover:text-white",
@@ -48,6 +51,7 @@ const PLANS = [
     name: "Профессиональный",
     price: "990 ₽",
     period: "в месяц",
+    planKey: "pro",
     badge: "Популярный",
     color: "border-primary",
     btnClass: "bg-primary hover:bg-primary/90 text-white",
@@ -67,6 +71,7 @@ const PLANS = [
     name: "Премиум",
     price: "2 490 ₽",
     period: "в месяц",
+    planKey: "premium",
     badge: "Бизнес",
     color: "border-border",
     btnClass: "border-border text-white hover:border-primary",
@@ -132,12 +137,19 @@ export default function PricingPage() {
                     </li>
                   ))}
                 </ul>
-                <Button
-                  variant={plan.btnVariant}
-                  className={`w-full ${plan.btnClass} bg-transparent`}
-                >
-                  Выбрать тариф
-                </Button>
+                {plan.planKey ? (
+                  <Link to={`/checkout?plan=${plan.planKey}`}>
+                    <Button variant={plan.btnVariant} className={`w-full ${plan.btnClass} bg-transparent`}>
+                      Выбрать тариф
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/music">
+                    <Button variant={plan.btnVariant} className={`w-full ${plan.btnClass} bg-transparent`}>
+                      Начать бесплатно
+                    </Button>
+                  </Link>
+                )}
               </CardContent>
             </Card>
           ))}

@@ -13,6 +13,10 @@ import JinglePage from "./pages/JinglePage";
 import ChatPage from "./pages/ChatPage";
 import CommunityPage from "./pages/CommunityPage";
 import PricingPage from "./pages/PricingPage";
+import CollabPage from "./pages/CollabPage";
+import LearnPage from "./pages/LearnPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +36,10 @@ const App = () => (
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/collab" element={<CollabPage />} />
+          <Route path="/learn" element={<LearnPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

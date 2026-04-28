@@ -1,4 +1,26 @@
 import Icon from "@/components/ui/icon"
+import { Link } from "react-router-dom"
+
+const SOCIAL_LINKS = [
+  {
+    name: "Telegram",
+    href: "https://t.me/aistudio",
+    icon: "Send",
+    label: "Telegram",
+  },
+  {
+    name: "VK",
+    href: "https://vk.com/aistudio",
+    icon: "Users",
+    label: "ВКонтакте",
+  },
+  {
+    name: "Max",
+    href: "https://max.ru/aistudio",
+    icon: "MessageCircle",
+    label: "Max",
+  },
+]
 
 export function Footer() {
   return (
@@ -7,64 +29,49 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <h2 className="font-orbitron text-2xl font-bold text-white mb-4">
-              AI<span className="text-red-500"> Studio</span>
-            </h2>
+            <Link to="/">
+              <h2 className="font-orbitron text-2xl font-bold text-white mb-4">
+                AI<span className="text-red-500"> Studio</span>
+              </h2>
+            </Link>
             <p className="font-space-mono text-gray-300 mb-6 max-w-md">
               Раскрой свой творческий потенциал с AI Studio — музыка, видео, фото, тексты и джинглы в одной платформе.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-red-500 transition-colors duration-200">
-                <Icon name="Send" size={20} fallback="MessageCircle" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-red-500 transition-colors duration-200">
-                <Icon name="Instagram" size={20} fallback="Camera" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-red-500 transition-colors duration-200">
-                <Icon name="Youtube" size={20} fallback="Play" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-red-500 transition-colors duration-200">
-                <Icon name="Mail" size={20} />
-              </a>
+            {/* Social links */}
+            <div className="flex space-x-3">
+              {SOCIAL_LINKS.map((s) => (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 text-gray-400 hover:text-red-500 transition-all duration-200 rounded-lg px-3 py-2 text-sm"
+                  title={s.label}
+                >
+                  <Icon name={s.icon as "Send"} size={16} />
+                  <span className="font-space-mono text-xs">{s.label}</span>
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Product */}
+          {/* Platform */}
           <div>
             <h3 className="font-orbitron text-white font-semibold mb-4">Платформа</h3>
             <ul className="space-y-2">
-              <li>
-                <a
-                  href="#features"
-                  className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200"
-                >
-                  Возможности
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#applications"
-                  className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200"
-                >
-                  Как это работает
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#testimonials"
-                  className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200"
-                >
-                  Отзывы
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#faq"
-                  className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200"
-                >
-                  Вопросы
-                </a>
-              </li>
+              {[
+                { label: "Создание музыки", path: "/music" },
+                { label: "Создание видео", path: "/video" },
+                { label: "Работа с фото", path: "/photo" },
+                { label: "Написание текстов", path: "/text" },
+                { label: "Джинглы", path: "/jingle" },
+              ].map((l) => (
+                <li key={l.path}>
+                  <Link to={l.path} className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200 text-sm">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -72,26 +79,19 @@ export function Footer() {
           <div>
             <h3 className="font-orbitron text-white font-semibold mb-4">Компания</h3>
             <ul className="space-y-2">
-              <li>
-                <a href="#" className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200">
-                  О нас
-                </a>
-              </li>
-              <li>
-                <a href="#" className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200">
-                  Блог
-                </a>
-              </li>
-              <li>
-                <a href="#" className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200">
-                  Партнёрство
-                </a>
-              </li>
-              <li>
-                <a href="#" className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200">
-                  Контакты
-                </a>
-              </li>
+              {[
+                { label: "Сообщество", path: "/community" },
+                { label: "Коллаборации", path: "/collab" },
+                { label: "Обучение", path: "/learn" },
+                { label: "Чат", path: "/chat" },
+                { label: "Тарифы", path: "/pricing" },
+              ].map((l) => (
+                <li key={l.path}>
+                  <Link to={l.path} className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200 text-sm">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -101,22 +101,13 @@ export function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="font-space-mono text-gray-400 text-sm">© 2025 AI Studio. Все права защищены.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a
-                href="#"
-                className="font-space-mono text-gray-400 hover:text-red-500 text-sm transition-colors duration-200"
-              >
+              <a href="#" className="font-space-mono text-gray-400 hover:text-red-500 text-sm transition-colors duration-200">
                 Конфиденциальность
               </a>
-              <a
-                href="#"
-                className="font-space-mono text-gray-400 hover:text-red-500 text-sm transition-colors duration-200"
-              >
+              <a href="#" className="font-space-mono text-gray-400 hover:text-red-500 text-sm transition-colors duration-200">
                 Условия использования
               </a>
-              <a
-                href="#"
-                className="font-space-mono text-gray-400 hover:text-red-500 text-sm transition-colors duration-200"
-              >
+              <a href="#" className="font-space-mono text-gray-400 hover:text-red-500 text-sm transition-colors duration-200">
                 Cookie-политика
               </a>
             </div>
