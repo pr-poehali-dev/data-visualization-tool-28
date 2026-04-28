@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { Link } from "react-router-dom"
 
 export function CTASection() {
   return (
@@ -10,19 +11,23 @@ export function CTASection() {
             Присоединяйся к тысячам авторов, музыкантов и предпринимателей, которые уже создают контент с помощью AI Studio. Начни бесплатно прямо сейчас.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 pulse-button text-lg px-8 py-4"
-            >
-              Начать бесплатно
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-4 bg-transparent"
-            >
-              Посмотреть примеры
-            </Button>
+            <Link to="/music">
+              <Button
+                size="lg"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 pulse-button text-lg px-8 py-4"
+              >
+                Начать бесплатно
+              </Button>
+            </Link>
+            <Link to="/pricing">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-4 bg-transparent"
+              >
+                Посмотреть тарифы
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
