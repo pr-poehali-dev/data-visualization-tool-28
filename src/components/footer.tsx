@@ -10,7 +10,7 @@ const SOCIAL_LINKS = [
   },
   {
     name: "VK",
-    href: "https://vk.com/aistudio",
+    href: "https://vk.com/GPTAIStudio",
     icon: "Users",
     label: "ВКонтакте",
   },
