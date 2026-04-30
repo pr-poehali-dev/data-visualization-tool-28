@@ -1,112 +1,115 @@
-import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
+import { useState } from "react"
 
 const MOCK_CHATS = [
-  { id: 1, user: "ivan@mail.ru", messages: 24, last: "Как скачать в WAV?", time: "12:00", flagged: false },
-  { id: 2, user: "anna@gmail.com", messages: 8, last: "Спасибо за помощь!", time: "11:30", flagged: false },
-  { id: 3, user: "olga@mail.ru", messages: 31, last: "Это невозможно использовать", time: "10:00", flagged: true },
-  { id: 4, user: "dm@gmail.com", messages: 5, last: "Добавьте FLAC", time: "09:30", flagged: false },
+  { id: 1, user: "ivan@mail.ru", last: "Как скачать трек?", time: "2 мин", type: "Личный", messages: 4 },
+  { id: 2, user: "anna@gmail.com", last: "Спасибо за помощь!", time: "15 мин", type: "Поддержка", messages: 8 },
+  { id: 3, user: "Команда разработчиков", last: "Обновление v2.1 готово", time: "1 ч", type: "Группа", messages: 23 },
+  { id: 4, user: "dmitry@yandex.ru", last: "Когда выйдет новая функция?", time: "3 ч", type: "Личный", messages: 2 },
 ]
 
-const MOCK_MSGS = [
-  { from: "user", text: "Привет! Как скачать трек в формате WAV?", time: "12:00" },
-  { from: "ai", text: "Здравствуйте! После генерации трека нажмите кнопку «Скачать» и выберите формат WAV.", time: "12:00" },
-  { from: "user", text: "А можно скачать несколько треков сразу?", time: "12:05" },
-  { from: "ai", text: "Пока скачивание доступно только по одному файлу. Эта функция в разработке!", time: "12:05" },
+const MOCK_MESSAGES = [
+  { from: "ivan@mail.ru", text: "Привет! Как скачать трек в формате WAV?", time: "12:30" },
+  { from: "support", text: "Здравствуйте! После генерации нажмите кнопку «Скачать» и выберите WAV.", time: "12:31" },
+  { from: "ivan@mail.ru", text: "Спасибо, нашёл!", time: "12:32" },
+  { from: "ivan@mail.ru", text: "Как скачать трек?", time: "12:45" },
 ]
 
 export default function AdminChatPage() {
   const [search, setSearch] = useState("")
-  const [selectedChat, setSelectedChat] = useState(MOCK_CHATS[0])
-  const [filter, setFilter] = useState("all")
+  const [selected, setSelected] = useState(MOCK_CHATS[0])
 
-  const filtered = MOCK_CHATS.filter(c =>
-    (filter === "all" || (filter === "flagged" && c.flagged)) &&
-    c.user.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = MOCK_CHATS.filter(c => c.user.toLowerCase().includes(search.toLowerCase()))
 
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-2xl font-bold text-white font-orbitron">Чаты пользователей</h2>
-        <p className="text-muted-foreground text-sm mt-1">Просмотр и модерация всех диалогов</p>
+        <h2 className="text-2xl font-bold text-white font-orbitron mb-1">Чаты</h2>
+        <p className="text-muted-foreground text-sm">Просмотр и модерация всех диалогов</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Sidebar */}
-        <div className="space-y-3">
-          <div className="flex gap-2">
-            <div className="relative flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 h-[600px]">
+        {/* List */}
+        <Card className="bg-card border-border flex flex-col overflow-hidden">
+          <CardContent className="pt-4 pb-3 border-b border-border">
+            <div className="relative">
               <Icon name="Search" size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input placeholder="Поиск..." value={search} onChange={e => setSearch(e.target.value)}
-                className="pl-8 bg-card border-border text-white placeholder:text-muted-foreground text-sm" />
+              <Input
+                placeholder="Поиск..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="pl-9 bg-background border-border text-white placeholder:text-muted-foreground h-8 text-sm"
+              />
             </div>
-          </div>
-          <div className="flex gap-2">
-            {[["all", "Все"], ["flagged", "⚑ Жалобы"]].map(([v, l]) => (
-              <button key={v} className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${filter === v ? "bg-primary text-white" : "bg-card border border-border text-muted-foreground hover:text-white"}`}
-                onClick={() => setFilter(v)}>{l}</button>
-            ))}
-          </div>
-          <div className="space-y-1">
+          </CardContent>
+          <div className="flex-1 overflow-y-auto">
             {filtered.map(c => (
               <div
                 key={c.id}
-                className={`p-3 rounded-lg cursor-pointer transition-colors border ${selectedChat.id === c.id ? "border-primary bg-primary/10" : "border-border bg-card hover:border-border/80"}`}
-                onClick={() => setSelectedChat(c)}
+                className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-border/50 hover:bg-background transition-colors ${selected.id === c.id ? "bg-background border-l-2 border-l-primary" : ""}`}
+                onClick={() => setSelected(c)}
               >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-white text-sm font-medium truncate flex-1">{c.user}</span>
-                  {c.flagged && <Icon name="Flag" size={13} className="text-red-400 flex-shrink-0 ml-1" />}
-                  <span className="text-muted-foreground text-xs ml-2">{c.time}</span>
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <Icon name={c.type === "Группа" ? "Users" : "User"} size={14} className="text-primary" />
                 </div>
-                <p className="text-muted-foreground text-xs truncate">{c.last}</p>
-                <p className="text-muted-foreground text-xs mt-1">{c.messages} сообщений</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="text-white text-sm truncate">{c.user}</p>
+                    <span className="text-muted-foreground text-xs flex-shrink-0">{c.time}</span>
+                  </div>
+                  <p className="text-muted-foreground text-xs truncate">{c.last}</p>
+                </div>
+                {c.messages > 0 && (
+                  <div className="w-5 h-5 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xs">{c.messages}</span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
-        </div>
+        </Card>
 
-        {/* Chat viewer */}
-        <div className="lg:col-span-2">
-          <Card className="bg-card border-border">
-            <CardHeader className="pb-3 border-b border-border">
-              <div className="flex items-center justify-between">
+        {/* Chat */}
+        <Card className="bg-card border-border flex flex-col overflow-hidden lg:col-span-2">
+          <CardHeader className="pb-3 border-b border-border">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Icon name="User" size={14} className="text-primary" />
+                </div>
                 <div>
-                  <CardTitle className="text-white text-base">{selectedChat.user}</CardTitle>
-                  <p className="text-muted-foreground text-xs mt-0.5">{selectedChat.messages} сообщений</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-red-400 h-8 text-xs">
-                    <Icon name="UserX" size={13} className="mr-1" />Бан
-                  </Button>
-                  <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-orange-400 h-8 text-xs">
-                    <Icon name="Flag" size={13} className="mr-1" />Пожаловаться
-                  </Button>
+                  <CardTitle className="text-white text-sm">{selected.user}</CardTitle>
+                  <Badge variant="outline" className="border-border text-muted-foreground text-xs">{selected.type}</Badge>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {MOCK_MSGS.map((m, i) => (
-                  <div key={i} className={`flex gap-2 ${m.from === "user" ? "" : "flex-row-reverse"}`}>
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs ${m.from === "user" ? "bg-primary/20 text-primary" : "bg-background text-muted-foreground border border-border"}`}>
-                      {m.from === "user" ? "U" : "AI"}
-                    </div>
-                    <div className={`rounded-xl px-3 py-2 max-w-xs text-sm group relative ${m.from === "user" ? "bg-background border border-border text-white" : "bg-primary/20 text-white"}`}>
-                      {m.text}
-                      <span className="block text-xs text-muted-foreground mt-1">{m.time}</span>
-                    </div>
+              <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 text-xs">
+                <Icon name="Ban" size={14} className="mr-1.5" />Забанить
+              </Button>
+            </div>
+          </CardHeader>
+          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            {MOCK_MESSAGES.map((m, i) => (
+              <div key={i} className={`flex gap-3 ${m.from === "support" ? "flex-row-reverse" : ""}`}>
+                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Icon name={m.from === "support" ? "Shield" : "User"} size={13} className="text-primary" />
+                </div>
+                <div className={`flex flex-col gap-1 max-w-xs ${m.from === "support" ? "items-end" : ""}`}>
+                  <div className={`rounded-xl px-3 py-2 text-sm ${m.from === "support" ? "bg-primary text-white" : "bg-background text-white border border-border"}`}>
+                    {m.text}
                   </div>
-                ))}
+                  <span className="text-muted-foreground text-xs">{m.time}</span>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            ))}
+          </div>
+          <div className="p-3 border-t border-border">
+            <p className="text-muted-foreground text-xs text-center">Режим просмотра — редактирование сообщений недоступно для защиты приватности</p>
+          </div>
+        </Card>
       </div>
     </div>
   )

@@ -1,19 +1,17 @@
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Icon from "@/components/ui/icon"
 
 export default function SettingsPage() {
   const [siteName, setSiteName] = useState("AI Studio")
   const [siteEmail, setSiteEmail] = useState("support@aistudio.ru")
-  const [twoFactor, setTwoFactor] = useState(false)
-  const [loginLimit, setLoginLimit] = useState("10")
-  const [maintenanceMode, setMaintenanceMode] = useState(false)
-  const [rules, setRules] = useState("1. Запрещено создавать контент 18+\n2. Запрещен спам\n3. Соблюдайте авторские права")
+  const [twofa, setTwofa] = useState(false)
+  const [maxLoginAttempts, setMaxLoginAttempts] = useState("5")
   const [saved, setSaved] = useState(false)
 
   const handleSave = () => {
@@ -22,113 +20,127 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-5">
       <div>
-        <h2 className="text-2xl font-bold text-white font-orbitron">Системные настройки</h2>
-        <p className="text-muted-foreground text-sm mt-1">Общие параметры сайта и безопасность</p>
+        <h2 className="text-2xl font-bold text-white font-orbitron mb-1">Системные настройки</h2>
+        <p className="text-muted-foreground text-sm">Управление конфигурацией платформы</p>
       </div>
 
-      {saved && <div className="bg-green-500/20 border border-green-500/30 text-green-400 px-4 py-2 rounded-lg text-sm">Настройки сохранены</div>}
+      <Tabs defaultValue="general">
+        <TabsList className="bg-background border border-border mb-5">
+          <TabsTrigger value="general" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground">
+            <Icon name="Settings" size={14} className="mr-2" />Общие
+          </TabsTrigger>
+          <TabsTrigger value="security" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground">
+            <Icon name="Shield" size={14} className="mr-2" />Безопасность
+          </TabsTrigger>
+          <TabsTrigger value="integrations" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground">
+            <Icon name="Puzzle" size={14} className="mr-2" />Интеграции
+          </TabsTrigger>
+          <TabsTrigger value="backup" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground">
+            <Icon name="HardDrive" size={14} className="mr-2" />Бэкапы
+          </TabsTrigger>
+        </TabsList>
 
-      {/* General */}
-      <Card className="bg-card border-border">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-white text-base flex items-center gap-2">
-            <Icon name="Globe" size={16} className="text-primary" />
-            Общие настройки
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label className="text-muted-foreground text-sm mb-1.5 block">Название сайта</Label>
-            <Input value={siteName} onChange={e => setSiteName(e.target.value)} className="bg-background border-border text-white" />
-          </div>
-          <div>
-            <Label className="text-muted-foreground text-sm mb-1.5 block">Email поддержки</Label>
-            <Input value={siteEmail} onChange={e => setSiteEmail(e.target.value)} type="email" className="bg-background border-border text-white" />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <Label className="text-white text-sm">Режим обслуживания</Label>
-              <p className="text-muted-foreground text-xs">Сайт будет недоступен для пользователей</p>
-            </div>
-            <Switch checked={maintenanceMode} onCheckedChange={setMaintenanceMode} />
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="general">
+          <Card className="bg-card border-border max-w-xl">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white text-base">Общие настройки</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="text-muted-foreground text-sm mb-1.5 block">Название сайта</Label>
+                <Input value={siteName} onChange={e => setSiteName(e.target.value)} className="bg-background border-border text-white" />
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-sm mb-1.5 block">Email поддержки</Label>
+                <Input value={siteEmail} onChange={e => setSiteEmail(e.target.value)} className="bg-background border-border text-white" />
+              </div>
+              <Button
+                className={`${saved ? "bg-green-600 hover:bg-green-700" : "bg-primary hover:bg-primary/90"} text-white`}
+                onClick={handleSave}
+              >
+                {saved ? <><Icon name="Check" size={14} className="mr-2" />Сохранено</> : "Сохранить изменения"}
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Security */}
-      <Card className="bg-card border-border">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-white text-base flex items-center gap-2">
-            <Icon name="Shield" size={16} className="text-primary" />
-            Безопасность
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label className="text-white text-sm">Двухфакторная аутентификация</Label>
-              <p className="text-muted-foreground text-xs">Обязательная 2FA для всех администраторов</p>
-            </div>
-            <Switch checked={twoFactor} onCheckedChange={setTwoFactor} />
-          </div>
-          <div>
-            <Label className="text-muted-foreground text-sm mb-1.5 block">Лимит попыток входа</Label>
-            <Input value={loginLimit} onChange={e => setLoginLimit(e.target.value)} type="number" className="bg-background border-border text-white w-32" />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Rules */}
-      <Card className="bg-card border-border">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-white text-base flex items-center gap-2">
-            <Icon name="FileText" size={16} className="text-primary" />
-            Правила использования
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Textarea value={rules} onChange={e => setRules(e.target.value)} rows={6} className="bg-background border-border text-white resize-none" />
-        </CardContent>
-      </Card>
-
-      {/* Backups */}
-      <Card className="bg-card border-border">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-white text-base flex items-center gap-2">
-            <Icon name="Database" size={16} className="text-primary" />
-            Резервные копии
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {[
-              { name: "backup_2025-04-30.sql", size: "124 МБ", date: "Сегодня 03:00" },
-              { name: "backup_2025-04-29.sql", size: "121 МБ", date: "Вчера 03:00" },
-              { name: "backup_2025-04-28.sql", size: "118 МБ", date: "28 апр 03:00" },
-            ].map((b, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-background border border-border">
-                <Icon name="HardDrive" size={16} className="text-primary flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-white text-sm">{b.name}</p>
-                  <p className="text-muted-foreground text-xs">{b.size} • {b.date}</p>
+        <TabsContent value="security">
+          <Card className="bg-card border-border max-w-xl">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white text-base">Безопасность</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-white text-sm">Двухфакторная аутентификация</Label>
+                  <p className="text-muted-foreground text-xs mt-0.5">Обязательна для администраторов</p>
                 </div>
-                <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-white">
-                  <Icon name="Download" size={13} />
+                <Switch checked={twofa} onCheckedChange={setTwofa} />
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-sm mb-1.5 block">Максимум попыток входа</Label>
+                <Input
+                  type="number"
+                  value={maxLoginAttempts}
+                  onChange={e => setMaxLoginAttempts(e.target.value)}
+                  className="bg-background border-border text-white w-32"
+                />
+              </div>
+              <Button className="bg-primary hover:bg-primary/90 text-white" onClick={handleSave}>
+                Сохранить
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="integrations">
+          <Card className="bg-card border-border max-w-xl">
+            <CardContent className="pt-6 space-y-4">
+              {[
+                { name: "Robokassa", desc: "Платёжная система", icon: "CreditCard", connected: true },
+                { name: "Telegram Bot", desc: "Уведомления в Telegram", icon: "Send", connected: false },
+                { name: "Email SMTP", desc: "Отправка писем", icon: "Mail", connected: false },
+              ].map(int => (
+                <div key={int.name} className="flex items-center justify-between p-3 rounded-lg bg-background border border-border">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Icon name={int.icon as "CreditCard"} size={16} className="text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-white text-sm font-medium">{int.name}</p>
+                      <p className="text-muted-foreground text-xs">{int.desc}</p>
+                    </div>
+                  </div>
+                  <Button variant="outline" size="sm" className={`border-border text-xs ${int.connected ? "text-green-400 border-green-500/30" : "text-white hover:border-primary"}`}>
+                    {int.connected ? "Подключено" : "Подключить"}
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="backup">
+          <Card className="bg-card border-border max-w-xl">
+            <CardContent className="pt-6 space-y-4">
+              <div className="flex items-center justify-between p-4 rounded-lg bg-background border border-border">
+                <div>
+                  <p className="text-white text-sm font-medium">Последний бэкап</p>
+                  <p className="text-muted-foreground text-xs mt-0.5">Сегодня, 03:00 · 142 МБ</p>
+                </div>
+                <Button variant="outline" size="sm" className="border-border text-white hover:border-primary">
+                  <Icon name="Download" size={13} className="mr-1.5" />Скачать
                 </Button>
               </div>
-            ))}
-            <Button variant="outline" size="sm" className="w-full border-border text-white hover:border-primary bg-transparent">
-              <Icon name="Plus" size={14} className="mr-2" />Создать резервную копию
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Button className="bg-primary hover:bg-primary/90 text-white" onClick={handleSave}>
-        <Icon name="Save" size={16} className="mr-2" />Сохранить изменения
-      </Button>
+              <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+                <Icon name="Database" size={14} className="mr-2" />Создать бэкап сейчас
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

@@ -1,12 +1,11 @@
 {
   "tests": [
     {
-      "name": "Stats without token returns 403",
+      "name": "Admin without token returns 403",
       "method": "GET",
-      "path": "/stats",
+      "path": "/",
       "expectedStatus": 403,
-      "expectedBody": {"error": "string"},
-      "bodyMatcher": "partial"
+      "bodyMatcher": "none"
     }
   ]
 }

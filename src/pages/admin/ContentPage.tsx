@@ -1,120 +1,120 @@
-import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Slider } from "@/components/ui/slider"
 import Icon from "@/components/ui/icon"
+import { useState } from "react"
 
 const MOCK_CONTENT = [
-  { id: 1, type: "music", user: "ivan@mail.ru", title: "Energetic Pop Track", created: "2025-04-30 11:00", status: "ok", size: "4.2 МБ" },
-  { id: 2, type: "video", user: "anna@gmail.com", title: "Instagram Reel Sunset", created: "2025-04-30 10:30", status: "ok", size: "12.1 МБ" },
-  { id: 3, type: "photo", user: "dmitry@yandex.ru", title: "Anime Portrait", created: "2025-04-30 10:00", status: "review", size: "2.4 МБ" },
-  { id: 4, type: "text", user: "maria@gmail.com", title: "Статья о здоровье", created: "2025-04-29 20:00", status: "ok", size: "8 КБ" },
-  { id: 5, type: "jingle", user: "oleg@mail.ru", title: "Coffee Shop Jingle", created: "2025-04-29 18:00", status: "ok", size: "1.8 МБ" },
+  { id: 1, type: "Музыка", user: "ivan@mail.ru", name: "Рекламный джингл.mp3", date: "Сегодня", status: "published" },
+  { id: 2, type: "Видео", user: "anna@gmail.com", name: "Слайд-шоу свадьба.mp4", date: "Вчера", status: "published" },
+  { id: 3, type: "Фото", user: "dmitry@yandex.ru", name: "Портрет_аниме.jpg", date: "Вчера", status: "pending" },
+  { id: 4, type: "Текст", user: "maria@mail.ru", name: "Продающий пост.txt", date: "2 дня назад", status: "published" },
 ]
 
-const AI_MODELS = [
-  { id: "openai", name: "OpenAI GPT-4", type: "Текст", enabled: true, requests: 1247 },
-  { id: "yandex_gpt", name: "Yandex GPT", type: "Текст", enabled: true, requests: 892 },
-  { id: "stable_diffusion", name: "Stable Diffusion", type: "Изображение", enabled: true, requests: 3421 },
-  { id: "suno", name: "Suno AI", type: "Музыка", enabled: true, requests: 654 },
-  { id: "runway", name: "Runway ML", type: "Видео", enabled: false, requests: 0 },
+const AI_SERVICES = [
+  { name: "OpenAI GPT-4", type: "Тексты", enabled: true },
+  { name: "Yandex GPT", type: "Тексты", enabled: true },
+  { name: "Stable Diffusion", type: "Изображения", enabled: true },
+  { name: "Suno AI", type: "Музыка", enabled: false },
+  { name: "Runway ML", type: "Видео", enabled: true },
 ]
-
-const typeIcon = (t: string) => ({ music: "Music", video: "Video", photo: "Image", text: "FileText", jingle: "Radio" }[t] || "File")
-const typeColor = (t: string) => ({ music: "text-purple-400", video: "text-orange-400", photo: "text-blue-400", text: "text-green-400", jingle: "text-yellow-400" }[t] || "text-muted-foreground")
-const typeLabel = (t: string) => ({ music: "Музыка", video: "Видео", photo: "Фото", text: "Текст", jingle: "Джингл" }[t] || t)
 
 export default function ContentPage() {
-  const [models, setModels] = useState(AI_MODELS)
-  const [content, setContent] = useState(MOCK_CONTENT)
+  const [services, setServices] = useState(AI_SERVICES)
+  const [temperature, setTemperature] = useState([0.7])
+  const [maxTokens, setMaxTokens] = useState([2000])
 
-  const toggleModel = (id: string) => {
-    setModels(prev => prev.map(m => m.id === id ? { ...m, enabled: !m.enabled } : m))
-  }
-
-  const moderateContent = (id: number, action: "approve" | "reject") => {
-    setContent(prev => prev.map(c => c.id === id ? { ...c, status: action === "approve" ? "ok" : "rejected" } : c))
+  const toggleService = (i: number) => {
+    setServices(prev => prev.map((s, idx) => idx === i ? { ...s, enabled: !s.enabled } : s))
   }
 
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="text-2xl font-bold text-white font-orbitron">Контент и ИИ</h2>
-        <p className="text-muted-foreground text-sm mt-1">Просмотр и модерация контента, управление моделями</p>
+        <h2 className="text-2xl font-bold text-white font-orbitron mb-1">Контент и ИИ</h2>
+        <p className="text-muted-foreground text-sm">Модерация контента и управление ИИ-моделями</p>
       </div>
 
-      <Tabs defaultValue="content">
-        <TabsList className="bg-card border border-border">
-          <TabsTrigger value="content" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground">
-            <Icon name="Grid" size={14} className="mr-2" />Контент
-          </TabsTrigger>
-          <TabsTrigger value="models" className="data-[state=active]:bg-primary data-[state=active]:text-white text-muted-foreground">
-            <Icon name="Cpu" size={14} className="mr-2" />ИИ-модели
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="content" className="mt-4 space-y-3">
-          {content.map((c) => (
-            <Card key={c.id} className="bg-card border-border">
-              <CardContent className="pt-4 pb-4">
-                <div className="flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-lg bg-background flex items-center justify-center flex-shrink-0 ${typeColor(c.type)}`}>
-                    <Icon name={typeIcon(c.type) as "Music"} size={18} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="bg-card border-border">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-white text-base flex items-center gap-2">
+              <Icon name="Layout" size={16} className="text-primary" />
+              Сгенерированный контент
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border">
+              {MOCK_CONTENT.map(c => (
+                <div key={c.id} className="flex items-center gap-3 px-4 py-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Icon name={c.type === "Музыка" ? "Music" : c.type === "Видео" ? "Video" : c.type === "Фото" ? "Image" : "FileText"} size={15} className="text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <p className="text-white text-sm font-medium truncate">{c.title}</p>
-                      <Badge variant="outline" className="border-border text-muted-foreground text-xs flex-shrink-0">{typeLabel(c.type)}</Badge>
-                      {c.status === "review" && <Badge variant="outline" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 text-xs flex-shrink-0">На проверке</Badge>}
-                      {c.status === "rejected" && <Badge variant="outline" className="bg-red-500/20 text-red-400 border-red-500/30 text-xs flex-shrink-0">Отклонён</Badge>}
-                    </div>
-                    <p className="text-muted-foreground text-xs">{c.user} • {c.size} • {c.created}</p>
+                    <p className="text-white text-sm truncate">{c.name}</p>
+                    <p className="text-muted-foreground text-xs">{c.user} · {c.date}</p>
                   </div>
-                  <div className="flex gap-1 flex-shrink-0">
-                    <Button size="sm" variant="ghost" className="h-7 px-2 text-muted-foreground hover:text-white"><Icon name="Eye" size={13} /></Button>
-                    {c.status === "review" && (
-                      <>
-                        <Button size="sm" variant="ghost" className="h-7 px-2 text-muted-foreground hover:text-green-400" onClick={() => moderateContent(c.id, "approve")}><Icon name="Check" size={13} /></Button>
-                        <Button size="sm" variant="ghost" className="h-7 px-2 text-muted-foreground hover:text-red-400" onClick={() => moderateContent(c.id, "reject")}><Icon name="X" size={13} /></Button>
-                      </>
-                    )}
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className={`text-xs ${c.status === "published" ? "text-green-400 border-green-500/30" : "text-yellow-400 border-yellow-500/30"}`}>
+                      {c.status === "published" ? "Опубликован" : "На проверке"}
+                    </Badge>
+                    <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-red-400 h-7 w-7 p-0">
+                      <Icon name="Trash2" size={13} />
+                    </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </TabsContent>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-        <TabsContent value="models" className="mt-4">
-          <div className="space-y-3">
-            {models.map((m) => (
-              <Card key={m.id} className="bg-card border-border">
-                <CardContent className="pt-4 pb-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-background flex items-center justify-center flex-shrink-0">
-                      <Icon name="Cpu" size={18} className="text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="text-white font-medium text-sm">{m.name}</p>
-                        <Badge variant="outline" className="border-border text-muted-foreground text-xs">{m.type}</Badge>
-                      </div>
-                      <p className="text-muted-foreground text-xs mt-0.5">{m.requests.toLocaleString()} запросов за месяц</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Label className="text-muted-foreground text-xs">{m.enabled ? "Активна" : "Выключена"}</Label>
-                      <Switch checked={m.enabled} onCheckedChange={() => toggleModel(m.id)} />
-                    </div>
+        <div className="space-y-4">
+          <Card className="bg-card border-border">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white text-base flex items-center gap-2">
+                <Icon name="Cpu" size={16} className="text-primary" />
+                ИИ-сервисы
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {services.map((s, i) => (
+                <div key={s.name} className="flex items-center justify-between py-1">
+                  <div>
+                    <p className="text-white text-sm">{s.name}</p>
+                    <p className="text-muted-foreground text-xs">{s.type}</p>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+                  <Switch checked={s.enabled} onCheckedChange={() => toggleService(i)} />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-border">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-white text-base flex items-center gap-2">
+                <Icon name="SlidersHorizontal" size={16} className="text-primary" />
+                Параметры генерации
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="text-muted-foreground text-sm mb-2 block">Температура: {temperature[0]}</Label>
+                <Slider value={temperature} onValueChange={setTemperature} min={0} max={2} step={0.1} />
+              </div>
+              <div>
+                <Label className="text-muted-foreground text-sm mb-2 block">Макс. токенов: {maxTokens[0]}</Label>
+                <Slider value={maxTokens} onValueChange={setMaxTokens} min={100} max={8000} step={100} />
+              </div>
+              <Button className="w-full bg-primary hover:bg-primary/90 text-white" size="sm">
+                Сохранить настройки
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   )
 }

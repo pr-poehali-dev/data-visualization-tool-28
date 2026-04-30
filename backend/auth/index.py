@@ -16,6 +16,10 @@ def get_db():
     return psycopg2.connect(os.environ["DATABASE_URL"])
 
 
+def q(table: str) -> str:
+    return f'"{SCHEMA}".{table}'
+
+
 def hash_password(password: str) -> str:
     salt = secrets.token_hex(16)
     hashed = hmac.new(salt.encode(), password.encode(), hashlib.sha256).hexdigest()
@@ -42,7 +46,7 @@ def cors_headers():
 def handler(event: dict, context) -> dict:
     """Регистрация, вход, выход, профиль пользователя"""
     if event.get("httpMethod") == "OPTIONS":
-        return {"statusCode": 200, "headers": cors_headers(), "body": ""}
+        return {"statusCode": 200, "headers": cors_headers(), "body": "", "isBase64Encoded": False}
 
     method = event.get("httpMethod", "GET")
     path = event.get("path", "/")
@@ -55,7 +59,6 @@ def handler(event: dict, context) -> dict:
 
     conn = get_db()
     cur = conn.cursor()
-    cur.execute(f"SET search_path TO {SCHEMA}")
 
     try:
         # POST /auth/login
@@ -63,7 +66,7 @@ def handler(event: dict, context) -> dict:
             email = body.get("email", "").strip().lower()
             password = body.get("password", "")
 
-            cur.execute("SELECT id, email, password_hash, name, role, status FROM users WHERE email = %s", (email,))
+            cur.execute(f"SELECT id, email, password_hash, name, role, status FROM {q('users')} WHERE email = %s", (email,))
             row = cur.fetchone()
 
             if not row:
@@ -80,12 +83,12 @@ def handler(event: dict, context) -> dict:
             token = secrets.token_urlsafe(48)
             expires = datetime.utcnow() + timedelta(days=30)
             cur.execute(
-                "INSERT INTO user_sessions (user_id, token, expires_at) VALUES (%s, %s, %s)",
+                f"INSERT INTO {q('user_sessions')} (user_id, token, expires_at) VALUES (%s, %s, %s)",
                 (user_id, token, expires)
             )
-            cur.execute("UPDATE users SET last_login_at = NOW() WHERE id = %s", (user_id,))
+            cur.execute(f"UPDATE {q('users')} SET last_login_at = NOW() WHERE id = %s", (user_id,))
             cur.execute(
-                "INSERT INTO user_activity_log (user_id, action, details) VALUES (%s, %s, %s)",
+                f"INSERT INTO {q('user_activity_log')} (user_id, action, details) VALUES (%s, %s, %s)",
                 (user_id, "login", "Успешный вход")
             )
             conn.commit()
@@ -106,13 +109,13 @@ def handler(event: dict, context) -> dict:
             if not email or not password:
                 return {"statusCode": 400, "headers": cors_headers(), "body": json.dumps({"error": "Email и пароль обязательны"}), "isBase64Encoded": False}
 
-            cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+            cur.execute(f"SELECT id FROM {q('users')} WHERE email = %s", (email,))
             if cur.fetchone():
                 return {"statusCode": 409, "headers": cors_headers(), "body": json.dumps({"error": "Пользователь уже существует"}), "isBase64Encoded": False}
 
             pw_hash = hash_password(password)
             cur.execute(
-                "INSERT INTO users (email, password_hash, name, role, status) VALUES (%s, %s, %s, 'user', 'active') RETURNING id",
+                f"INSERT INTO {q('users')} (email, password_hash, name, role, status) VALUES (%s, %s, %s, 'user', 'active') RETURNING id",
                 (email, pw_hash, name)
             )
             user_id = cur.fetchone()[0]
@@ -120,7 +123,7 @@ def handler(event: dict, context) -> dict:
             token = secrets.token_urlsafe(48)
             expires = datetime.utcnow() + timedelta(days=30)
             cur.execute(
-                "INSERT INTO user_sessions (user_id, token, expires_at) VALUES (%s, %s, %s)",
+                f"INSERT INTO {q('user_sessions')} (user_id, token, expires_at) VALUES (%s, %s, %s)",
                 (user_id, token, expires)
             )
             conn.commit()
@@ -140,7 +143,7 @@ def handler(event: dict, context) -> dict:
                 return {"statusCode": 401, "headers": cors_headers(), "body": json.dumps({"error": "Токен не передан"}), "isBase64Encoded": False}
 
             cur.execute(
-                "SELECT u.id, u.email, u.name, u.role, u.status, u.subscription, u.created_at FROM user_sessions s JOIN users u ON s.user_id = u.id WHERE s.token = %s AND s.expires_at > NOW()",
+                f"SELECT u.id, u.email, u.name, u.role, u.status, u.subscription, u.created_at FROM {q('user_sessions')} s JOIN {q('users')} u ON s.user_id = u.id WHERE s.token = %s AND s.expires_at > NOW()",
                 (token,)
             )
             row = cur.fetchone()
@@ -160,7 +163,7 @@ def handler(event: dict, context) -> dict:
             auth_header = event.get("headers", {}).get("X-Authorization", "")
             token = auth_header.replace("Bearer ", "").strip()
             if token:
-                cur.execute("UPDATE user_sessions SET expires_at = NOW() WHERE token = %s", (token,))
+                cur.execute(f"UPDATE {q('user_sessions')} SET expires_at = NOW() WHERE token = %s", (token,))
                 conn.commit()
             return {"statusCode": 200, "headers": cors_headers(), "body": json.dumps({"ok": True}), "isBase64Encoded": False}
 

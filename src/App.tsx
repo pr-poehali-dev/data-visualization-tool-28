@@ -18,6 +18,18 @@ import LearnPage from "./pages/LearnPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import SupportPage from "./pages/SupportPage";
+import LoginPage from "./pages/LoginPage";
+import AdminLayout from "./pages/admin/AdminLayout";
+import Dashboard from "./pages/admin/Dashboard";
+import UsersPage from "./pages/admin/UsersPage";
+import ActivityPage from "./pages/admin/ActivityPage";
+import SubscriptionsPage from "./pages/admin/SubscriptionsPage";
+import FinancePage from "./pages/admin/FinancePage";
+import ContentPage from "./pages/admin/ContentPage";
+import AdminChatPage from "./pages/admin/AdminChatPage";
+import TicketsPage from "./pages/admin/TicketsPage";
+import AnalyticsPage from "./pages/admin/AnalyticsPage";
+import SettingsPage from "./pages/admin/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +41,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/music" element={<MusicPage />} />
           <Route path="/video" element={<VideoPage />} />
           <Route path="/photo" element={<PhotoPage />} />
@@ -42,6 +55,19 @@ const App = () => (
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/support" element={<SupportPage />} />
+          {/* Admin panel */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="activity" element={<ActivityPage />} />
+            <Route path="subscriptions" element={<SubscriptionsPage />} />
+            <Route path="finance" element={<FinancePage />} />
+            <Route path="content" element={<ContentPage />} />
+            <Route path="chat" element={<AdminChatPage />} />
+            <Route path="tickets" element={<TicketsPage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
