@@ -85,6 +85,7 @@ export function Footer() {
                 { label: "Обучение", path: "/learn" },
                 { label: "Чат", path: "/chat" },
                 { label: "Тарифы", path: "/pricing" },
+                { label: "Поддержка", path: "/support" },
               ].map((l) => (
                 <li key={l.path}>
                   <Link to={l.path} className="font-space-mono text-gray-400 hover:text-red-500 transition-colors duration-200 text-sm">

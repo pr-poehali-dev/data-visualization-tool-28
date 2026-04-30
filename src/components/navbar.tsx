@@ -18,6 +18,7 @@ const NAV_LINKS = [
   { label: "Обучение", path: "/learn" },
   { label: "Чат", path: "/chat" },
   { label: "Тарифы", path: "/pricing" },
+  { label: "Поддержка", path: "/support" },
 ]
 
 export function Navbar() {

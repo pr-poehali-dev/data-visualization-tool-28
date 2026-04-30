@@ -17,6 +17,7 @@ import CollabPage from "./pages/CollabPage";
 import LearnPage from "./pages/LearnPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import SupportPage from "./pages/SupportPage";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/learn" element={<LearnPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/support" element={<SupportPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

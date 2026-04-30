@@ -1,0 +1,13 @@
+{
+  "tests": [
+    {
+      "name": "Login admin",
+      "method": "POST",
+      "path": "/login",
+      "body": {"email": "elenalazareva88@yandex.ru", "password": "TktyfBrbhf12"},
+      "expectedStatus": 200,
+      "expectedBody": {"token": "string"},
+      "bodyMatcher": "partial"
+    }
+  ]
+}

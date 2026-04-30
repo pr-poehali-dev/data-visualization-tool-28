@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -44,6 +44,9 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
           <DialogTitle className="text-center font-orbitron text-xl text-white">
             AI<span className="text-red-500"> Studio</span>
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Форма входа и регистрации в AI Studio
+          </DialogDescription>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-2">
