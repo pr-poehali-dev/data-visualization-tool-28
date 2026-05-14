@@ -395,6 +395,79 @@ def handler(event: dict, context) -> dict:
                 "isBase64Encoded": False,
             }
 
+        # POST /auth/forgot-password — запросить сброс пароля
+        elif method == "POST" and "/forgot-password" in path:
+            email = body.get("email", "").strip().lower()
+            if not email:
+                return {"statusCode": 400, "headers": cors_headers(), "body": json.dumps({"error": "Укажите email"}), "isBase64Encoded": False}
+
+            cur.execute(f"SELECT id FROM {q('users')} WHERE email = %s", (email,))
+            row = cur.fetchone()
+            if not row:
+                # Не раскрываем, существует ли email
+                return {"statusCode": 200, "headers": cors_headers(), "body": json.dumps({"ok": True}), "isBase64Encoded": False}
+
+            user_id = row[0]
+            # Генерируем 6-значный цифровой код
+            import random
+            code = str(random.randint(100000, 999999))
+            expires = datetime.utcnow() + timedelta(minutes=30)
+
+            # Инвалидируем старые токены
+            cur.execute(f"UPDATE {q('password_reset_tokens')} SET used = TRUE WHERE user_id = %s AND used = FALSE", (user_id,))
+            cur.execute(
+                f"INSERT INTO {q('password_reset_tokens')} (user_id, token, expires_at) VALUES (%s, %s, %s)",
+                (user_id, code, expires)
+            )
+            conn.commit()
+
+            return {
+                "statusCode": 200,
+                "headers": cors_headers(),
+                "body": json.dumps({"ok": True, "code": code}),
+                "isBase64Encoded": False,
+            }
+
+        # POST /auth/reset-password — применить новый пароль по коду
+        elif method == "POST" and "/reset-password" in path:
+            email = body.get("email", "").strip().lower()
+            code = body.get("code", "").strip()
+            new_password = body.get("new_password", "")
+
+            if not email or not code or not new_password:
+                return {"statusCode": 400, "headers": cors_headers(), "body": json.dumps({"error": "Заполните все поля"}), "isBase64Encoded": False}
+
+            if len(new_password) < 6:
+                return {"statusCode": 400, "headers": cors_headers(), "body": json.dumps({"error": "Пароль должен быть не менее 6 символов"}), "isBase64Encoded": False}
+
+            cur.execute(f"SELECT id FROM {q('users')} WHERE email = %s", (email,))
+            user_row = cur.fetchone()
+            if not user_row:
+                return {"statusCode": 400, "headers": cors_headers(), "body": json.dumps({"error": "Неверный код или email"}), "isBase64Encoded": False}
+
+            user_id = user_row[0]
+            cur.execute(
+                f"SELECT id FROM {q('password_reset_tokens')} WHERE user_id = %s AND token = %s AND used = FALSE AND expires_at > NOW()",
+                (user_id, code)
+            )
+            token_row = cur.fetchone()
+            if not token_row:
+                return {"statusCode": 400, "headers": cors_headers(), "body": json.dumps({"error": "Неверный или просроченный код"}), "isBase64Encoded": False}
+
+            new_hash = hash_password(new_password)
+            cur.execute(f"UPDATE {q('users')} SET password_hash = %s, updated_at = NOW() WHERE id = %s", (new_hash, user_id))
+            cur.execute(f"UPDATE {q('password_reset_tokens')} SET used = TRUE WHERE id = %s", (token_row[0],))
+            # Инвалидируем все сессии
+            cur.execute(f"UPDATE {q('user_sessions')} SET expires_at = NOW() WHERE user_id = %s", (user_id,))
+            conn.commit()
+
+            return {
+                "statusCode": 200,
+                "headers": cors_headers(),
+                "body": json.dumps({"ok": True}),
+                "isBase64Encoded": False,
+            }
+
         else:
             return {"statusCode": 404, "headers": cors_headers(), "body": json.dumps({"error": "Not found"}), "isBase64Encoded": False}
 
