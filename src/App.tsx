@@ -31,6 +31,8 @@ import TicketsPage from "./pages/admin/TicketsPage";
 import AnalyticsPage from "./pages/admin/AnalyticsPage";
 import SettingsPage from "./pages/admin/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+import CookiePolicyPage from "./pages/CookiePolicyPage";
+import CookieBanner from "./components/CookieBanner";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +42,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <CookieBanner />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<LoginPage />} />
@@ -57,6 +60,7 @@ const App = () => (
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/support" element={<SupportPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/cookie-policy" element={<CookiePolicyPage />} />
           {/* Admin panel */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
