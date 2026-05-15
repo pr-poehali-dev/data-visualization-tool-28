@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Checkbox } from "@/components/ui/checkbox"
 import Icon from "@/components/ui/icon"
 import { AUTH_URL, saveAuth } from "@/lib/auth"
+import TermsModal from "@/components/TermsModal"
 
 interface AuthModalProps {
   open: boolean
@@ -30,6 +32,8 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
   // Регистрация
   const [registerData, setRegisterData] = useState({ name: "", email: "", password: "", confirm: "" })
   const [registerError, setRegisterError] = useState("")
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [termsModalOpen, setTermsModalOpen] = useState(false)
 
   // Восстановление пароля
   const [forgotEmail, setForgotEmail] = useState("")
@@ -50,6 +54,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
     setLoginError("")
     setRegisterData({ name: "", email: "", password: "", confirm: "" })
     setRegisterError("")
+    setTermsAccepted(false)
     setForgotEmail("")
     setForgotError("")
     setResetCode("")
@@ -99,6 +104,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setRegisterError("")
+    if (!termsAccepted) { setRegisterError("Необходимо принять пользовательское соглашение"); return }
     if (registerData.password !== registerData.confirm) { setRegisterError("Пароли не совпадают"); return }
     if (registerData.password.length < 6) { setRegisterError("Пароль должен быть не менее 6 символов"); return }
     setIsLoading(true)
@@ -174,6 +180,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
   )
 
   return (
+    <>
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="bg-card border border-border text-white max-w-md w-full mx-4">
         <DialogHeader>
@@ -291,8 +298,25 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
                     required
                   />
                 </div>
+                <label className="flex items-start gap-3 cursor-pointer group pt-1">
+                  <Checkbox
+                    checked={termsAccepted}
+                    onCheckedChange={(v) => setTermsAccepted(!!v)}
+                    className="mt-0.5 shrink-0"
+                  />
+                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+                    Я ознакомился и принимаю{" "}
+                    <button
+                      type="button"
+                      onClick={() => setTermsModalOpen(true)}
+                      className="text-primary hover:underline"
+                    >
+                      Пользовательское соглашение
+                    </button>
+                  </span>
+                </label>
                 {registerError && <ErrorBox text={registerError} />}
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white mt-1" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white mt-1" disabled={isLoading || !termsAccepted}>
                   {isLoading ? <><Icon name="Loader2" size={16} className="mr-2 animate-spin" />Создаём аккаунт...</> : "Зарегистрироваться"}
                 </Button>
               </form>
@@ -427,5 +451,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
         )}
       </DialogContent>
     </Dialog>
+    <TermsModal open={termsModalOpen} onOpenChange={(v) => { setTermsModalOpen(v); if (!v) setTermsAccepted(true) }} />
+    </>
   )
 }
