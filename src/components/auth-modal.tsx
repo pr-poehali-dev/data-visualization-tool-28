@@ -205,7 +205,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
                     placeholder="example@mail.ru"
                     value={loginData.email}
                     onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
-                    className="bg-background border-border text-white placeholder:text-muted-foreground"
+                    className="bg-white border-border text-black placeholder:text-gray-400"
                     required
                     autoFocus
                   />
@@ -226,7 +226,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
                     placeholder="••••••••"
                     value={loginData.password}
                     onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                    className="bg-background border-border text-white placeholder:text-muted-foreground"
+                    className="bg-white border-border text-black placeholder:text-gray-400"
                     required
                   />
                 </div>
@@ -326,7 +326,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
                   placeholder="example@mail.ru"
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
-                  className="bg-background border-border text-white placeholder:text-muted-foreground"
+                  className="bg-white border-border text-black placeholder:text-gray-400"
                   required
                   autoFocus
                 />
@@ -372,7 +372,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
                       placeholder="123456"
                       value={resetCode}
                       onChange={(e) => setResetCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      className="bg-background border-border text-white placeholder:text-muted-foreground font-mono text-center text-lg tracking-widest"
+                      className="bg-white border-border text-black placeholder:text-gray-400 font-mono text-center text-lg tracking-widest"
                       maxLength={6}
                       required
                       autoFocus={!codeFromServer}
@@ -385,7 +385,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
                       placeholder="Минимум 6 символов"
                       value={resetNewPwd}
                       onChange={(e) => setResetNewPwd(e.target.value)}
-                      className="bg-background border-border text-white placeholder:text-muted-foreground"
+                      className="bg-white border-border text-black placeholder:text-gray-400"
                       required
                     />
                   </div>
@@ -396,7 +396,7 @@ export function AuthModal({ open, onOpenChange, defaultTab = "login" }: AuthModa
                       placeholder="Повторите пароль"
                       value={resetConfirm}
                       onChange={(e) => setResetConfirm(e.target.value)}
-                      className="bg-background border-border text-white placeholder:text-muted-foreground"
+                      className="bg-white border-border text-black placeholder:text-gray-400"
                       required
                     />
                   </div>
